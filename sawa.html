@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <body>
+    <a-scene physics="driver: ammo" cursor="rayOrigin: mouse">
+      <a-entity id="ctlR" laser-controls="hand: right" raycaster="showLine: false;"></a-entity>
+      <a-entity id="ctlL" laser-controls="hand: left" raycaster="showLine: false;"></a-entity>
+    </a-scene>
+
+    <script>
+      let ctlR = document.querySelector('#ctlR').object3D;
+      // let ctlL = document.querySelector('#ctlL').object3D;
+      let startR = new THREE.Vector3(ctlR);
+      let startL = new THREE.Vector3(ctlL);
+      let isPressed = false;
+
+      
+
+      function updateLine(ctlId, start, color) {
+        let ctl = document.querySelector(`#${ctlId}`).object3D;
+        let end = new THREE.Vector3().copy(ctl.position);
+
+        let draw = document.createElement('a-entity'); // 動的生成
+        draw.setAttribute('line', `color:${color}; start:${start.x} ${start.y} ${start.z}; end:${end.x} ${end.y} ${end.z};`);
+        start.copy(end);
+                
+        
+        let scene = document.querySelector('a-scene');
+        scene.appendChild(draw); // シーンに追加（表示）
+      }
+
+      setInterval(function() {
+        if(isPressed){
+          updateLine('ctlR', startR, 'orange'); // 右手で線を描画
+        // updateLine('ctlL', startL, 'blue');   // 左手で線を描画
+        }
+        console.log(startR);
+      }, 100);
+
+      $('#ctlR').on('abuttondown triggerdown', function() {//AボタンDown トリガーDown
+      		isPressed = true;
+          startR.copy(ctlR.position);
+    	});
+    	
+    	$('#ctlR').on('abuttonup triggerup', function() {//AボタンUP トリガーUP
+      		isPressed = false;
+    	});
+    </script>
+  </body>
+</html>
